@@ -3,12 +3,14 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import cors from 'cors';
 import morgan from 'morgan';
+import timeout from "connect-timeout";
 import db from "./db.js";
 import routes from "./routes.js";
 
 const app = express();
 
 app.use(helmet());
+app.use(timeout('6s'));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
@@ -20,6 +22,6 @@ db.sync().then(() => {
 }).catch();
 
 // starting the server
-app.listen(3001, () => {
+const server = app.listen(process.env.APP_PORT, () => {
     console.log('listening on port 3001');
 });

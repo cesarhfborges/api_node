@@ -10,12 +10,20 @@ function login(req, res) {
 }
 
 async function register(req, res) {
-    const params = {
-        email: req.body.email,
-        password: req.body.password
-    };
-    const result = await UsersRepository.create(params);
-    res.json(result);
+    try {
+        const params = {
+            email: req.body.email,
+            password: req.body.password
+        };
+        const result = await UsersRepository.create(params);
+        res.statusCode = 200;
+        res.json(result);
+    } catch (e) {
+        console.log('error: ', e);
+        console.log('error: ', e.errors);
+        res.statusCode = 406;
+        res.json(e.errors.map(i => ({key: i.path, message: i.message})));
+    }
 }
 
 // TODO: Remover depois de implementar  * apenas teste

@@ -1,22 +1,49 @@
 import db from "../db.js";
-import { Sequelize, INTEGER, STRING } from "sequelize";
+import {DataTypes} from "sequelize";
 import bcrypt from "bcrypt";
 
 const UserSchema = db.define("users", {
     id: {
-        type: INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
     },
     email: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: {
+            arg: true,
+            msg: 'Endereço de e-mail já cadastrado.'
+        },
+        validate: {
+            notNull: {
+                arg: true,
+                msg: 'Endereço de e-mail não pode ser nulo.'
+            },
+            notEmpty: {
+                arg: true,
+                msg: 'Endereço de email não pode estar vázio.'
+            },
+            isEmail: {
+                arg: true,
+                msg: 'Favor informar um endereço de email válido.'
+            },
+        }
     },
     password: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+            notNull: {
+                arg: true,
+                msg: 'A senha não pode ser nula.'
+            },
+            notEmpty: {
+                arg: true,
+                msg: 'A senha não pode ser vázia.'
+            },
+        }
     },
 }, {
     timestamps: true,
@@ -37,40 +64,7 @@ const UserSchema = db.define("users", {
                 user.password = bcrypt.hashSync(user.password, salt);
             }
         },
-        // instanceMethods: {
-        //     validPassword: (password) => {
-        //         return bcrypt.compareSync(password, this.password);
-        //     }
-        // }
-        // beforeCreate: (attributes, options) => {
-        //     const salt = bcrypt.genSaltSync();
-        //     attributes.password = bcrypt.hashSync(attributes.password, salt);
-        // },
-        // instanceMethods: {
-        //     validPassword: (password) => {
-        //         return bcrypt.compareSync(password, this.password);
-        //     }
-        // }
-    }
-    // scopes: {
-    //     withPassword: {
-    //         attributes: { },
-    //     }
-    // }
-}, {
-    instanceMethods: {
-        verifyPassword: function(password) {
-            return bcrypt.compareSync(password, this.password);
-        }
-    }
+    },
 });
-
-// UserSchema.beforeCreate((user, options) => {
-//     return bcrypt.hash(user.password, 10).then(hash => {
-//         user.password = hash;
-//     }).catch(err => {
-//         throw new Error('Hashing error!')
-//     })
-// });
 
 export default UserSchema;
