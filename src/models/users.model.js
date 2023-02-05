@@ -45,6 +45,14 @@ const UserSchema = db.define("users", {
             },
         }
     },
+    confirmation: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    refresh: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    }
 }, {
     timestamps: true,
     paranoid: true,
@@ -74,11 +82,17 @@ const UserSchema = db.define("users", {
         validPassword: (password) => {
             return bcrypt.compareSync(password, this.password);
         }
+    },
+    classMethods: {
+        validPassword: (password) => {
+            return bcrypt.compareSync(password, this.password);
+        }
     }
 });
 
 UserSchema.prototype.validPassword = async (password, hash) => {
-    return await bcrypt.compareSync(password, hash);
+    const compare = await bcrypt.compareSync(password, hash);
+    return compare;
 }
 
 export default UserSchema;
