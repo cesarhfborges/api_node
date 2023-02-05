@@ -1,22 +1,25 @@
 import ClientRepository from "../models/clients.model.js";
 
-function findAll(req, res) {
-    ClientRepository.findAll().then((result) => res.json(result));
+async function findAll(req, res) {
+    const result = await ClientRepository.findAll();
+    return res.status(200).json(result);
 }
 
-function findClient(req, res) {
-    ClientRepository.findByPk(req.params.id).then((result) => res.json(result));
+async function findClient(req, res) {
+    const result = await ClientRepository.findByPk(req.params.id);
+    return res.status(200).json(result);
 }
 
-function addClient(req, res) {
-    ClientRepository.create({
+async function addClient(req, res) {
+    const result = await ClientRepository.create({
         nome: req.body.nome,
         email: req.body.email,
-    }).then((result) => res.json(result));
+    });
+    return res.status(200).json(result);
 }
 
 async function updateClient(req, res) {
-    await ClientRepository.update(
+    const up = await ClientRepository.update(
         {
             nome: req.body.nome,
             email: req.body.email,
@@ -28,7 +31,8 @@ async function updateClient(req, res) {
         }
     );
 
-    ClientRepository.findByPk(req.params.id).then((result) => res.json(result));
+    const result = await ClientRepository.findByPk(req.params.id);
+    return res.status(200).json(result);
 }
 
 async function deleteClient(req, res) {
