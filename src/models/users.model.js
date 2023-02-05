@@ -91,8 +91,7 @@ const UserSchema = db.define("users", {
 });
 
 UserSchema.prototype.validPassword = async (password, hash) => {
-    const compare = await bcrypt.compareSync(password, hash);
-    return compare;
+    return await bcrypt.compareSync(password, hash);
 }
 
 export default UserSchema;

@@ -7,7 +7,7 @@ const routes = express.Router();
 
 routes.post("/auth/login", auth.login);
 routes.post("/auth/register", auth.register);
-routes.get("/auth/list", verifyJWT, auth.list);
+routes.post("/auth/refresh", verifyJWT, auth.refresh);
 
 routes.get("/clients", verifyJWT, clients.findAll);
 routes.post("/clients", verifyJWT, clients.addClient);

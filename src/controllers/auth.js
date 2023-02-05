@@ -1,5 +1,5 @@
 import UsersRepository from "../models/users.model.js";
-import jwt from "jsonwebtoken";
+import jwt, {verify} from "jsonwebtoken";
 
 async function login(req, res) {
     try {
@@ -48,10 +48,27 @@ async function register(req, res) {
     }
 }
 
-// TODO: Remover depois de implementar  * apenas teste
-async function list(req, res) {
-    const result = await UsersRepository.findAll();
-    res.status(200).json(result);
+async function refresh(req, res) {
+    try {
+        const sessionTime = parseInt(process.env.SESSION_TIME) ?? 300;
+
+        const params = {
+            refresh: req.body.refresh,
+        };
+        const user = await UsersRepository.findOne({ where: params });
+        const payload = { id: user.id, email: user.email, time: new Date() };
+
+        verify(user.refresh, process.env.REFRESH_SECRET.toString(),function(err, decoded) {
+            if (err) {
+                return res.status(401).json({ auth: false, message: 'Failed to refresh token.' });
+            }
+            const token = jwt.sign(payload, process.env.SECRET.toString(), {expiresIn: sessionTime});
+            return res.status(200).json({token: token});
+        });
+        // user.update({refresh: newRefresh});
+    } catch (e) {
+        return res.status(401).json({ auth: false, message: 'Failed to refresh token.' });
+    }
 }
 
-export default { login, register, list };
+export default { login, register, refresh };
