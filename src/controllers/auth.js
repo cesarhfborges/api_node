@@ -37,7 +37,7 @@ async function register(req, res) {
             password: req.body.password
         };
         const result = await UsersRepository.create(params);
-        return res.status(200).json(result);
+        return res.status(200).json({status: 200, message: 'Usuário cadastrado com sucesso.'});
     } catch (e) {
         console.log('error: ', e);
         console.log('error: ', e.errors);
