@@ -41,8 +41,7 @@ async function deleteClient(req, res) {
             id: req.params.id,
         },
     });
-
-    ClientRepository.findAll().then((result) => res.json(result));
+    return res.status(200).json({status: 200, message: 'Sucesso.'});
 }
 
 export default { findAll, addClient, findClient, updateClient, deleteClient };
