@@ -1,4 +1,5 @@
 import express from "express";
+import {verifyJWT} from "./middlewares/authentication.js";
 import clients from "./controllers/clients.js";
 import auth from "./controllers/auth.js";
 
@@ -6,12 +7,12 @@ const routes = express.Router();
 
 routes.post("/auth/login", auth.login);
 routes.post("/auth/register", auth.register);
-routes.get("/auth/list", auth.list);
+routes.get("/auth/list", verifyJWT, auth.list);
 
-routes.get("/clients", clients.findAll);
-routes.post("/clients", clients.addClient);
-routes.get("/clients/:id", clients.findClient);
-routes.put("/clients/:id", clients.updateClient);
-routes.delete("/clients/:id", clients.deleteClient);
+routes.get("/clients", verifyJWT, clients.findAll);
+routes.post("/clients", verifyJWT, clients.addClient);
+routes.get("/clients/:id", verifyJWT, clients.findClient);
+routes.put("/clients/:id", verifyJWT, clients.updateClient);
+routes.delete("/clients/:id", verifyJWT, clients.deleteClient);
 
 export { routes as default };

@@ -10,9 +10,14 @@ import routes from "./routes.js";
 const app = express();
 
 app.use(helmet());
-app.use(timeout('6s'));
+app.use(timeout('60s'));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 200
+}));
 app.use(morgan('combined'));
 
 app.use(routes);

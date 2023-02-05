@@ -53,6 +53,11 @@ const UserSchema = db.define("users", {
             exclude: ['deletedAt', 'password']
         }
     },
+    scopes: {
+        withPassword: {
+            exclude: ['deletedAt']
+        }
+    },
     hooks: {
         beforeCreate(attributes, options) {
             const salt = bcrypt.genSaltSync();
@@ -65,6 +70,15 @@ const UserSchema = db.define("users", {
             }
         },
     },
+    instanceMethods: {
+        validPassword: (password) => {
+            return bcrypt.compareSync(password, this.password);
+        }
+    }
 });
+
+UserSchema.prototype.validPassword = async (password, hash) => {
+    return await bcrypt.compareSync(password, hash);
+}
 
 export default UserSchema;
