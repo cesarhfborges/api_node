@@ -14,7 +14,6 @@ async function login(req, res) {
             const refreshTime = sessionTime * 3;
 
             const payload = { id: result.id, email: result.email, time: new Date() };
-
             const token = jwt.sign(payload, process.env.SECRET.toString(), {expiresIn: sessionTime});
             const refresh = jwt.sign(payload, process.env.REFRESH_SECRET.toString(), {expiresIn: refreshTime});
 
@@ -38,12 +37,10 @@ async function register(req, res) {
             password: req.body.password
         };
         const result = await UsersRepository.create(params);
-        // res.statusCode = 200;
         return res.status(200).json(result);
     } catch (e) {
         console.log('error: ', e);
         console.log('error: ', e.errors);
-        // res.statusCode = 406;
         res.status(406).json(e.errors.map(i => ({key: i.path, message: i.message})));
     }
 }
@@ -65,7 +62,6 @@ async function refresh(req, res) {
             const token = jwt.sign(payload, process.env.SECRET.toString(), {expiresIn: sessionTime});
             return res.status(200).json({token: token});
         });
-        // user.update({refresh: newRefresh});
     } catch (e) {
         return res.status(401).json({ auth: false, message: 'Failed to refresh token.' });
     }
