@@ -45,11 +45,15 @@ const UserSchema = db.define("users", {
             },
         }
     },
+    refresh: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     confirmation: {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    refresh: {
+    confirmation_key: {
         type: DataTypes.STRING,
         allowNull: true,
     }

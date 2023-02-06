@@ -24,9 +24,10 @@ app.use(routes);
 
 db.sync().then(() => {
     console.log(`Banco de dados conectado`);
-}).catch();
+}).catch(() => {
+    console.log('Não foi possivel conectar ao banco de dados.')
+});
 
-// starting the server
-const server = app.listen(process.env.APP_PORT, () => {
+app.listen(process.env.APP_PORT, () => {
     console.log('listening on port 3001');
 });

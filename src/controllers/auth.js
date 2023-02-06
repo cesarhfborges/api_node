@@ -1,5 +1,6 @@
 import UsersRepository from "../models/users.model.js";
 import jwt, {verify} from "jsonwebtoken";
+import {email} from "../mail/email.js";
 
 async function login(req, res) {
     try {
@@ -18,7 +19,7 @@ async function login(req, res) {
             const refresh = jwt.sign(payload, process.env.REFRESH_SECRET.toString(), {expiresIn: refreshTime});
 
             const user = await UsersRepository.findOne({ where: params });
-            user.update({refresh: refresh});
+            await user.update({refresh: refresh});
 
             return res.status(200).json({token: token, refresh: refresh});
         }
@@ -36,7 +37,7 @@ async function register(req, res) {
             email: req.body.email,
             password: req.body.password
         };
-        const result = await UsersRepository.create(params);
+        await UsersRepository.create(params);
         return res.status(200).json({status: 200, message: 'Usuário cadastrado com sucesso.'});
     } catch (e) {
         console.log('error: ', e);
@@ -67,4 +68,24 @@ async function refresh(req, res) {
     }
 }
 
-export default { login, register, refresh };
+async function sendConfirmationEmail(req, res) {
+    try {
+        await email({
+            from: 'dortha.farrell@ethereal.email',
+            to: 'cesar_silk321@hotmail.com',
+            subject: 'Confirmação de cadastro'
+        });
+        return res.status(200).json({ status: 200, message: 'Success, check your\'s email' });
+    } catch (e) {
+        return res.status(500).json({ status: 500, message: 'error' });
+    }
+}
+
+async function confirmEmail(req, res) {
+    if (req.params.confirmation) {
+        return res.status(200).json({ status: 200, message: 'Success, email confirmed.' });
+    }
+    return res.status(500).json({ status: 500, message: 'error' });
+}
+
+export default { login, register, refresh, sendConfirmationEmail, confirmEmail };
